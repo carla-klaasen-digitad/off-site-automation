@@ -78,7 +78,8 @@ def _insert_content(docs, doc_id: str, title: str, content: str):
                     "range": {"startIndex": index, "endIndex": index + 3}
                 }
             })
-        elif line.startswith("Meta-title:") or line.startswith("Meta-description:"):
+        elif (line.startswith("Meta-title:") or line.startswith("Meta-description:")
+              or line.startswith("Méta-titre") or line.startswith("Méta-description")):
             # Bold the entire line so it stands out for the analyst
             cleanup_requests.append({
                 "updateTextStyle": {

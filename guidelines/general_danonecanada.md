@@ -31,43 +31,103 @@ There are two content types for Danone Canada. The BL Type field in the sheet de
 
 These rules are derived from the existing Danone Canada article corpus (authored by Dalia Medellel).
 
-- **Tone**: Neutral, measured, slightly advisory. Never enthusiastic, promotional, or sales-y.
+- **Tone**: Neutral, measured, observational. Never enthusiastic, promotional, or sales-y.
 - **Sentences**: Short to medium length. Varied rhythm. Avoid complex nested clauses.
 - **Paragraphs**: 2–4 sentences each. White space is important — do not write dense blocks.
-- **No bullet points** unless the article title explicitly calls for a list format (e.g., "5 ideas for…").
 - **No superlatives**: do not write "the best", "the most", "amazing", "delicious".
+- **No moralizing**: the tone is observational, not prescriptive. Prefer "many people find" or "tend to" over "you should".
 - **No direct address of the reader as someone who needs help**: avoid "if you struggle with X".
-- **Avoid moralizing**: the tone is observational, not prescriptive. Prefer "many people find" over "you should".
-- The reader should not feel sold to. The brand mention (if present) reads as a practical, neutral example — not an endorsement.
+- **Hedged language is required**: use "often", "tend to", "can", "may", "sometimes" — never assert absolutes.
+- **Health claims must use "may"**: write "may help support your gut health" — never "supports gut health" or "improves digestion".
+- **No "studies show"** or references to research/science unless citing a named, verified source.
+- The reader should not feel sold to. The brand mention (if present) reads as a neutral, practical example.
 - Articles are written in Canadian English (EN) or Quebec French (FR) depending on the Language field.
+
+**Opening sentence rule**: always an observation about human behaviour or context. Never a direct question, never a command.
+- EN good: "Mornings tend to follow a rhythm, even when they don't feel structured."
+- EN bad: "Are you looking for the best morning routine?" / "Start your day right."
+
+**Closing paragraph rule**: end with a calm, forward-looking observation. Never use "In conclusion", "In summary", or "To sum up". No heading on the final paragraph.
 
 ---
 
-## Article Structure
+## Article Structure — Two Formats
 
-Every article must follow this structure:
+### Format 1: Prose Article
+
+For general, non-list titles (e.g., "When Yogurt Becomes a Morning Habit"):
 
 ```
-**Meta-title:** [Article title — 55–65 characters]
-**Meta-description:** [Summary — 140–160 characters]
+Meta-title: [SEO title — 55–65 characters]
+Meta-description: [SEO description, 140–160 characters]
 
-# **[Article title]**
+# [Article title]
 
-[Intro paragraph — 2–4 sentences, no heading]
+[Intro — 2–4 sentences, no heading]
 
-## **[Section heading]**
-[Body...]
+## [Section heading]
+[2–3 paragraphs of 2–4 sentences each]
 
-## **[Section heading]**
-[Body...]
+## [Section heading]
+...
 
-... (5–7 H2 sections total)
+[Closing paragraph — no heading]
 ```
+
+- 5–7 H2 sections total.
+- No bullet points anywhere.
+- Entire article is continuous prose.
+
+### Format 2: Numbered-List Article
+
+For list titles ("3 ideas for X", "5 ways to Y", "6 best Z"):
+
+```
+Meta-title: [SEO title]
+Meta-description: [SEO description]
+
+# [Article title]
+
+[Intro — 2–4 sentences explaining the list's purpose]
+
+## 1. [Item name]
+
+[1–2 setup paragraphs]
+
+What you need:
+- Ingredient 1
+- Ingredient 2
+
+How to make it:
+[1 paragraph]
+
+## 2. [Item name]
+...
+
+## [General section — e.g. "Keeping It Practical"]
+[1–2 paragraphs]
+
+[Closing paragraph — no heading]
+```
+
+- Bullet points are allowed ONLY for recipe ingredients (What you need / Ce qu'il faut).
+- Non-recipe sections remain continuous prose.
+- Brand mention goes inside one numbered item — in the same paragraph as the anchor.
+
+### French meta header format
+
+French articles use accented labels:
+- `Méta-titre :` (not "Meta-title:")
+- `Méta-description :` (not "Meta-description:")
+- Note the space before the colon — standard French punctuation.
+
+### General rules (both formats)
 
 - Word count: follow the brief (typically 500–700 words; 1000 if specified).
-- H1 = article title. H2 = section headings. No H3 unless article is 1000+ words.
-- No title in French uses ":" unless it is followed by a meaningful subtitle.
-- The brand mention paragraph (for "with mention" articles) is typically placed in a middle section — not the intro and not the final section.
+- H1 = article title. H2 = section headings. H3 only in 1000-word articles.
+- No French title uses ":" unless followed by a meaningful subtitle.
+- Brand mention paragraph (for "with mention" articles): place in a middle section, never in the intro or final paragraph.
+- The brand or product descriptor appears as a natural example in one sentence only.
 
 ---
 
