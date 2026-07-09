@@ -14,7 +14,7 @@ clients:
     data_start_row: 5                    # row number where data begins
     status_trigger: "To create"          # value in Status column that marks a row as ready to run
     status_done: "Automation Done"       # value written to Status column when complete
-    guideline_prefix: "yourclientid"     # prefix used in guidelines filenames (e.g. "danonenorthamerica")
+    guideline_prefix: "yourclientid"     # prefix used in guidelines filenames (e.g. "danoneusa", "danonecanada")
                                          # brand file pattern: {brand}_{guideline_prefix}_{en|fr}.md
                                          # general file pattern: general_{guideline_prefix}.md
     brands:                              # list of brand IDs for this client
