@@ -39,7 +39,7 @@ def create_article_doc(creds, title: str, content: str, drive_folder_id: str) ->
 
 
 def _insert_content(docs, doc_id: str, title: str, content: str):
-    """Insert title as H1 and body content with H2 headings formatted."""
+    """Insert title as H1 and body content with H2 headings and bold meta lines formatted."""
     requests = []
 
     # Insert full text first (title + newline + body)
@@ -58,7 +58,7 @@ def _insert_content(docs, doc_id: str, title: str, content: str):
         }
     })
 
-    # Style ## lines as Heading 2 and strip the ## markers
+    # Style ## lines as Heading 2, strip ## markers, and bold Meta-title/Meta-description lines
     lines = full_text.split("\n")
     index = 1
     cleanup_requests = []
@@ -78,6 +78,15 @@ def _insert_content(docs, doc_id: str, title: str, content: str):
                     "range": {"startIndex": index, "endIndex": index + 3}
                 }
             })
+        elif line.startswith("Meta-title:") or line.startswith("Meta-description:"):
+            # Bold the entire line so it stands out for the analyst
+            cleanup_requests.append({
+                "updateTextStyle": {
+                    "range": {"startIndex": index, "endIndex": line_end - 1},
+                    "textStyle": {"bold": True},
+                    "fields": "bold"
+                }
+            })
         index = line_end
 
     docs.documents().batchUpdate(
@@ -91,7 +100,7 @@ def _insert_content(docs, doc_id: str, title: str, content: str):
             r for r in reversed(cleanup_requests)
             if "deleteContentRange" in r
         ]
-        style_requests = [r for r in cleanup_requests if "updateParagraphStyle" in r]
+        style_requests = [r for r in cleanup_requests if "updateParagraphStyle" in r or "updateTextStyle" in r]
         if style_requests:
             docs.documents().batchUpdate(
                 documentId=doc_id, body={"requests": style_requests}

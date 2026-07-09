@@ -3,6 +3,74 @@
 
 ---
 
+## Article Types (BL Type)
+
+There are two content types for Danone Canada. The BL Type field in the sheet determines which applies.
+
+### Guest-Blog (no mention)
+- Write a general informational article on the topic in the brief.
+- Do NOT mention any Danone Canada brand anywhere in the article body.
+- The article reads as pure editorial — no brand association, no product reference.
+- The anchor link goes to a relevant page but the text does not name the brand.
+
+### Guest-Blog with Mention
+- Write a general informational article on the topic. The brand is NOT the main subject.
+- Include exactly ONE natural brand reference, in ONE paragraph, tied to the anchor.
+- The brand or product appears as a brief, practical aside — a single sentence.
+- Example EN pattern: "A [product type](brand-url) can be a simple option for this purpose."
+- Example FR pattern: "[Un produit](brand-url) peut être intégré facilement dans ce type de routine."
+- The paragraph containing the mention must be topically related to the anchor text and to the article topic.
+- The brand mention must appear in the SAME paragraph as the anchor link.
+- The article must NOT read like a press release, a sponsored post, or a product review.
+- The brand is never the subject of a section heading or of the article itself.
+- Danone Canada rule: the brand must not be the primary subject of the article, to clearly distinguish this from a press release.
+
+---
+
+## Writing Style & Tone
+
+These rules are derived from the existing Danone Canada article corpus (authored by Dalia Medellel).
+
+- **Tone**: Neutral, measured, slightly advisory. Never enthusiastic, promotional, or sales-y.
+- **Sentences**: Short to medium length. Varied rhythm. Avoid complex nested clauses.
+- **Paragraphs**: 2–4 sentences each. White space is important — do not write dense blocks.
+- **No bullet points** unless the article title explicitly calls for a list format (e.g., "5 ideas for…").
+- **No superlatives**: do not write "the best", "the most", "amazing", "delicious".
+- **No direct address of the reader as someone who needs help**: avoid "if you struggle with X".
+- **Avoid moralizing**: the tone is observational, not prescriptive. Prefer "many people find" over "you should".
+- The reader should not feel sold to. The brand mention (if present) reads as a practical, neutral example — not an endorsement.
+- Articles are written in Canadian English (EN) or Quebec French (FR) depending on the Language field.
+
+---
+
+## Article Structure
+
+Every article must follow this structure:
+
+```
+**Meta-title:** [Article title — 55–65 characters]
+**Meta-description:** [Summary — 140–160 characters]
+
+# **[Article title]**
+
+[Intro paragraph — 2–4 sentences, no heading]
+
+## **[Section heading]**
+[Body...]
+
+## **[Section heading]**
+[Body...]
+
+... (5–7 H2 sections total)
+```
+
+- Word count: follow the brief (typically 500–700 words; 1000 if specified).
+- H1 = article title. H2 = section headings. No H3 unless article is 1000+ words.
+- No title in French uses ":" unless it is followed by a meaningful subtitle.
+- The brand mention paragraph (for "with mention" articles) is typically placed in a middle section — not the intro and not the final section.
+
+---
+
 ## Legal & Claims
 
 - Have the target keyword (and secondary keywords) validated by legal before writing; request clarification in advance on which uses are permitted.

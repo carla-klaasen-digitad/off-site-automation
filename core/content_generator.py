@@ -71,15 +71,17 @@ def _build_prompt(row: dict, guidelines: str, language_variant: str, bl_type: st
 
     if is_with_mention:
         brand_instruction = (
-            f"The article is NOT about {brand}. However, naturally incorporate one brief mention "
-            f"of {brand} somewhere in the article where it relates organically to the anchor text "
-            f'"{anchor}". This can be a single sentence or a short paragraph. '
-            f"The rest of the article must remain focused on the topic."
+            f"The article is NOT about {brand} — the brand must not be the main subject. "
+            f"Include exactly ONE natural mention of {brand}, in ONE paragraph. "
+            f"That mention must be in the SAME paragraph as the anchor link for \"{anchor}\". "
+            f"The mention is a brief aside — a single sentence where the brand appears as a practical example. "
+            f"Example pattern: \"A [product type] can be a simple option for this purpose.\" "
+            f"The article must not read like a press release or sponsored content."
         )
     else:
         brand_instruction = (
             f"Do NOT mention {brand} or any brand name anywhere in the article. "
-            f"This is a pure guest post — the anchor text is the only brand-adjacent element."
+            f"This is a pure guest post — write only general editorial content."
         )
 
     return f"""You are writing an off-site guest post article. Follow all guidelines below exactly.
@@ -94,24 +96,29 @@ WRITING GUIDELINES:
 ARTICLE SPECIFICATIONS:
 - Title: {title}
 - Language: Write entirely in {language_variant}
-- Length: 800–1,200 words
+- Length: 500–700 words
 - Anchor text: {anchor_instruction}
 - Brand mention rule: {brand_instruction}
 
 ---
 
 STRUCTURE:
-1. Introduction (no heading) — 2–3 sentences leading naturally into the topic
-2. 3–4 body sections with H2 headings
-3. Conclusion — 1 short paragraph, no heading
+1. Start with these two lines (use exactly this format):
+   Meta-title: [SEO title, 55–65 characters]
+   Meta-description: [SEO description, 140–160 characters]
+   Then a blank line.
+2. Introduction (no heading) — 2–4 sentences setting up the topic
+3. 5–7 body sections, each with an H2 heading (## Heading)
+4. No separate conclusion heading — end with a short closing paragraph
 
 FORMAT RULES:
-- Use H2 for section headings only (##)
-- No H1 — the title is set separately
-- No bullet lists unless the content genuinely calls for it
+- Use ## for section headings only (no H1 — the title is set separately)
+- Paragraphs: 2–4 sentences. No dense blocks.
+- No bullet lists unless the title explicitly calls for a numbered list format
 - No em dashes (—) more than twice in the entire article
 - No filler phrases ("In today's world", "In conclusion", "It goes without saying")
-- Output the article body only — no meta commentary, no "Here is your article:"
+- No superlatives, no enthusiastic or promotional language
+- Output the meta block + article body only — no commentary, no "Here is your article:"
 
 ---
 

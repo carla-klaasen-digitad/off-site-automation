@@ -95,7 +95,7 @@ def main():
 
     # ── Guideline prefix ──
     console.print("\n[dim]The guideline prefix is used in guidelines filenames.[/dim]")
-    console.print(f"[dim]Example: prefix 'danonenorthamerica' → oikos_danonenorthamerica_en.md[/dim]")
+    console.print(f"[dim]Example: prefix 'danoneusa' → oikos_danoneusa_en.md[/dim]")
     default_prefix = client_id.replace("_", "")
     guideline_prefix = Prompt.ask("[bold]Guideline prefix[/bold]", default=default_prefix).strip().lower()
 
