@@ -28,7 +28,7 @@ Generates off-site guest post articles from a Google Sheet and saves them as for
 
 ```
 off-site-automation/
-├── automate_content.py       ← run this daily
+├── automate_content.py       ← run to start automation 
 ├── setup_client.py           ← run once per new client
 ├── push_guidelines.py        ← run when brand guidelines change
 ├── clients.yaml              ← client config (never commit — contains IDs)
