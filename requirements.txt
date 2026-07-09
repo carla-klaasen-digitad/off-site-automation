@@ -1,0 +1,15 @@
+# REQUIRED — install all of these
+anthropic                      # Claude API — generates article content
+google-api-python-client       # Google Sheets, Drive, Docs APIs
+google-auth                    # Google authentication
+google-auth-oauthlib           # Browser OAuth login flow
+google-auth-httplib2           # Transport layer for Google auth
+python-dotenv                  # Reads .env file for API keys
+pyyaml                         # Reads clients.yaml config
+rich                           # Terminal formatting (banner, progress display)
+
+# OPTIONAL — only needed if using DOCX export
+python-docx                    # Export articles to .docx files
+
+# OPTIONAL — only needed if using Unsplash images
+requests                       # Fetch images from Unsplash API

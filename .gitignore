@@ -1,0 +1,22 @@
+# Credentials — never commit these
+token.json
+credentials.json
+*.json
+!clients.yaml.template
+.env
+
+# Client config — contains Sheet IDs (use clients.yaml.template as reference)
+clients.yaml
+
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+.Python
+
+# Logs (keep structure, not content)
+logs/*.log
+
+# OS
+.DS_Store

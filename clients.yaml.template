@@ -1,0 +1,77 @@
+# clients.yaml — Client Configuration File
+# Copy this file to clients.yaml and fill in your values.
+# Each top-level key under "clients:" is a client ID (lowercase, no spaces).
+# Never commit clients.yaml to Git — it contains Sheet IDs.
+
+clients:
+
+  your_client_id:                        # e.g. danone_usa, mitacs, danone_canada
+    name: "Your Client Display Name"     # shown in the terminal banner and logs
+    sheet_id: "1abc123..."               # Google Sheet ID (string between /d/ and /edit in the URL)
+    tab_name: "Sheet Tab Name"           # exact name of the tab in the sheet
+    drive_folder_id: "1xyz456..."        # Google Drive folder ID (string after /folders/ in the URL)
+    header_row: 4                        # row number containing column headers
+    data_start_row: 5                    # row number where data begins
+    status_trigger: "To create"          # value in Status column that marks a row as ready to run
+    status_done: "Automation Done"       # value written to Status column when complete
+    guideline_prefix: "yourclientid"     # prefix used in guidelines filenames (e.g. "danonenorthamerica")
+                                         # brand file pattern: {brand}_{guideline_prefix}_{en|fr}.md
+                                         # general file pattern: general_{guideline_prefix}.md
+    brands:                              # list of brand IDs for this client
+      - brand_one                        # must match a guidelines file: brand_client_lang.md
+      - brand_two                        # leave list empty [] if client name = brand name
+
+    columns:                             # column letters for each field in the sheet
+      website: "B"                       # brand name — used to load the correct .md file
+      status: "C"                        # run trigger and completion marker
+      month: "D"                         # month filter (EN or FR, any format)
+      year: "E"                          # year filter (optional column — remove if not in sheet)
+      bl_type: "F"                       # "Guest-blog" or "Guest-blog with mention" (case-insensitive)
+      language: "G"                      # "English" or "French" (case-insensitive)
+      title: "N"                         # article title / heading
+      anchor: "O"                        # anchor text to hyperlink in article
+      target_url: "P"                    # destination URL for anchor (can be blank — not a run condition)
+      content: "Q"                       # where the generated Google Doc URL is written
+
+
+# --- EXAMPLE: Danone USA ---
+#
+# clients:
+#   danone_usa:
+#     name: "Danone USA"
+#     sheet_id: "1BxiMVs0XRA5nFMdK0XRA..."
+#     tab_name: "OFF SITE - Tier 1 - Content Strategy"
+#     drive_folder_id: "1FolderIDfromDriveURL..."
+#     header_row: 4
+#     data_start_row: 5
+#     status_trigger: "To create"
+#     status_done: "Automation Done"
+#     brands:
+#       - oikos
+#       - silk
+#       - dannon
+#       - danimals
+#       - activia
+#       - lightandfit
+#       - toogood
+#       - stok
+#       - dunkincreamers
+#       - internationaldelight
+#       - evian
+#       - happyfamily
+#       - danonenorthamerica
+#       - danoneafh
+#       - followyourheart
+#       - sodelicious
+#       - yocrunch
+#     columns:
+#       website: "B"
+#       status: "C"
+#       month: "D"
+#       year: "E"
+#       bl_type: "F"
+#       language: "G"
+#       title: "N"
+#       anchor: "O"
+#       target_url: "P"
+#       content: "Q"
