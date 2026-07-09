@@ -1,4 +1,5 @@
 """Read and update rows in a Google Sheet."""
+from __future__ import annotations
 from googleapiclient.discovery import build
 from core.month_normalizer import month_matches
 

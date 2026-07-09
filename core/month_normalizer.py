@@ -1,4 +1,5 @@
 """Normalize month names — handles English and French, abbreviations, accents, case."""
+from __future__ import annotations
 
 MONTH_MAP = {
     # English — full

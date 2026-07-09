@@ -2,6 +2,7 @@
 Off-Site Content Automation — interactive CLI.
 Run: python automate_content.py
 """
+from __future__ import annotations
 import sys
 from datetime import datetime
 from rich.console import Console
