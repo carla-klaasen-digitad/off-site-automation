@@ -162,16 +162,14 @@ def create_article_doc(creds, title: str, content: str, drive_folder_id: str) ->
     docs  = get_docs_service(creds)
     drive = get_drive_service(creds)
 
-    # Create document and move to target folder
-    doc = docs.documents().create(body={"title": title}).execute()
-    doc_id = doc["documentId"]
-    file = drive.files().get(fileId=doc_id, fields="parents").execute()
-    drive.files().update(
-        fileId=doc_id,
-        addParents=drive_folder_id,
-        removeParents=",".join(file.get("parents", [])),
-        fields="id,parents"
-    ).execute()
+    # Create document directly in the target folder (avoids a separate move
+    # step that fails on shared folders where the account lacks ownership)
+    doc = drive.files().create(body={
+        "name": title,
+        "mimeType": "application/vnd.google-apps.document",
+        "parents": [drive_folder_id]
+    }).execute()
+    doc_id = doc["id"]
 
     # Split content into meta block + article body
     meta_lines, body_lines = _split_content(content)
