@@ -162,13 +162,16 @@ def create_article_doc(creds, title: str, content: str, drive_folder_id: str) ->
     docs  = get_docs_service(creds)
     drive = get_drive_service(creds)
 
-    # Create document directly in the target folder (avoids a separate move
-    # step that fails on shared folders where the account lacks ownership)
-    doc = drive.files().create(body={
-        "name": title,
-        "mimeType": "application/vnd.google-apps.document",
-        "parents": [drive_folder_id]
-    }).execute()
+    # supportsAllDrives=True is required for Google Workspace Shared Drives;
+    # harmless on regular My Drive folders.
+    doc = drive.files().create(
+        body={
+            "name": title,
+            "mimeType": "application/vnd.google-apps.document",
+            "parents": [drive_folder_id]
+        },
+        supportsAllDrives=True
+    ).execute()
     doc_id = doc["id"]
 
     # Split content into meta block + article body
