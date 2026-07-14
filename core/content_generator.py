@@ -22,9 +22,8 @@ LANG_CODE_MAP = {
 # Maps sheet brand values (after slug normalization) to the guidelines filename prefix.
 # Add entries here when the sheet uses a different name than the guidelines file.
 BRAND_SLUG_ALIASES = {
-    "danoneyogurt": "dannon",   # "Danone Yogurt" in sheet → dannon_*.md
-    "danone":       "dannon",   # "Danone" → dannon_*.md
-    "danino":       "dannon",   # "Danino" → dannon_*.md
+    # Add entries here when the sheet brand name doesn't match the guidelines filename prefix.
+    # Format: "normalized_sheet_slug": "guidelines_file_prefix"
 }
 
 
