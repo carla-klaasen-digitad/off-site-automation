@@ -1,5 +1,6 @@
 """Create formatted Google Docs from generated article content."""
 import os
+import random
 import re
 
 import anthropic
@@ -75,9 +76,11 @@ def _fetch_unsplash_image(title: str, content: str):
         results = resp.json().get("results", [])
         if not results:
             return None, None
-        # Pick highest-liked photo for better quality
-        best = max(results, key=lambda p: p.get("likes", 0))
-        return best["urls"]["regular"], best["links"]["html"]
+        # Sort by likes, then pick randomly from top 3 — avoids identical photos
+        # when two articles produce similar queries (e.g. two Activia morning articles)
+        results.sort(key=lambda p: p.get("likes", 0), reverse=True)
+        pick = random.choice(results[:3])
+        return pick["urls"]["regular"], pick["links"]["html"]
     except Exception:
         return None, None
 
