@@ -69,7 +69,7 @@ def _build_prompt(row: dict, guidelines: str, language_variant: str, bl_type: st
     meta_desc_label = "Méta-description :" if is_french else "Meta-description:"
 
     anchor_instruction = (
-        f'Hyperlink the exact text "{anchor}" to this URL: {target_url}'
+        f'Embed the anchor text as a markdown hyperlink exactly once: [{anchor}]({target_url})'
         if target_url and target_url.lower() != "category page to add"
         else f'Insert the exact text "{anchor}" in bold (no hyperlink — URL to be added later)'
     )
@@ -109,8 +109,8 @@ ARTICLE SPECIFICATIONS:
 
 STRUCTURE:
 1. Start with these two lines (use exactly this format):
-   {meta_title_label}: [SEO title, 55–65 characters]
-   {meta_desc_label}: [SEO description, 140–160 characters]
+   {meta_title_label} [SEO title, 55–65 characters]
+   {meta_desc_label} [SEO description, 140–160 characters]
    Then a blank line.
 2. Introduction (no heading) — 2–4 sentences setting up the topic
 3. 5–7 body sections, each with an H2 heading (## Heading)

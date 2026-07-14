@@ -10,6 +10,7 @@ from googleapiclient.discovery import build
 load_dotenv()
 
 COMBINED_RE = re.compile(r'\[([^\]]+)\]\(([^)]+)\)|\*\*([^\*]+)\*\*')
+META_LINE_RE = re.compile(r'^(Meta-title|Meta-description|Méta-titre|Méta-description)', re.IGNORECASE)
 
 
 def get_docs_service(creds):
@@ -68,54 +69,94 @@ def _fetch_unsplash_image(title: str, content: str):
 
 # ── Content parser ────────────────────────────────────────────────────────────
 
-def _parse_segments(title: str, content: str) -> list:
+def _split_content(content: str) -> tuple:
     """
-    Build a flat list of typed segments from title + article markdown.
-    Types: h1, h2, bold, link, normal.
+    Separate meta lines (Meta-title, Meta-description) from the article body.
+    Returns (meta_lines: list[str], body_lines: list[str]).
+    """
+    lines = content.split("\n")
+    meta_lines = []
+    body_start = 0
+    for i, line in enumerate(lines):
+        if META_LINE_RE.match(line.strip()):
+            meta_lines.append(line.strip())
+            body_start = i + 1
+        elif not line.strip() and i <= len(meta_lines) + 1:
+            body_start = i + 1  # skip blank line after meta block
+        elif meta_lines:
+            break  # first non-blank, non-meta line after meta block
+    return meta_lines, lines[body_start:]
+
+
+def _parse_inline(line: str, segments: list):
+    """Append inline-parsed segments (links, bold, normal) for one line."""
+    last_end = 0
+    for m in COMBINED_RE.finditer(line):
+        if m.start() > last_end:
+            segments.append({"type": "normal", "text": line[last_end:m.start()], "url": None})
+        if m.group(0).startswith("["):
+            segments.append({"type": "link", "text": m.group(1), "url": m.group(2)})
+        else:
+            segments.append({"type": "bold", "text": m.group(3), "url": None})
+        last_end = m.end()
+    if last_end < len(line):
+        segments.append({"type": "normal", "text": line[last_end:], "url": None})
+    segments.append({"type": "normal", "text": "\n", "url": None})
+
+
+def _build_segments(title: str, meta_lines: list, body_lines: list) -> tuple:
+    """
+    Build segment list in display order:
+      1. Meta-title (bold label)
+      2. Meta-description (bold label)
+      3. Blank line
+      4. [image placeholder — caller inserts image here]
+      5. H1 title
+      6. Article body
+
+    Returns (segments, meta_block_char_len) so the caller knows where to insert the image.
     """
     segments = []
+    meta_char_len = 0
 
-    # Title as H1
+    # 1–2. Meta block (bold)
+    for line in meta_lines:
+        segments.append({"type": "bold",   "text": line, "url": None})
+        segments.append({"type": "normal", "text": "\n",  "url": None})
+        meta_char_len += len(line) + 1  # +1 for \n
+
+    # 3. Blank line after meta block
+    if meta_lines:
+        segments.append({"type": "normal", "text": "\n", "url": None})
+        meta_char_len += 1
+
+    # Image goes here — caller uses meta_char_len+1 as the insertion index
+
+    # 4. H1 title
     segments.append({"type": "h1",     "text": title, "url": None})
     segments.append({"type": "normal", "text": "\n",  "url": None})
 
-    for line in content.split("\n"):
+    # 5. Article body
+    for line in body_lines:
         if line.startswith("## "):
             segments.append({"type": "h2",     "text": line[3:].strip(), "url": None})
             segments.append({"type": "normal", "text": "\n",             "url": None})
         elif line.startswith("# "):
-            # Claude shouldn't emit H1, but handle gracefully
             segments.append({"type": "h1",     "text": line[2:].strip(), "url": None})
             segments.append({"type": "normal", "text": "\n",             "url": None})
-        elif (line.startswith("Meta-title:") or line.startswith("Meta-description:")
-              or line.startswith("Méta-titre") or line.startswith("Méta-description")):
-            segments.append({"type": "bold",   "text": line, "url": None})
-            segments.append({"type": "normal", "text": "\n", "url": None})
         else:
-            last_end = 0
-            for m in COMBINED_RE.finditer(line):
-                if m.start() > last_end:
-                    segments.append({"type": "normal", "text": line[last_end:m.start()], "url": None})
-                if m.group(0).startswith("["):
-                    # Markdown link: [text](url)
-                    segments.append({"type": "link", "text": m.group(1), "url": m.group(2)})
-                else:
-                    # Bold: **text**
-                    segments.append({"type": "bold", "text": m.group(3), "url": None})
-                last_end = m.end()
-            if last_end < len(line):
-                segments.append({"type": "normal", "text": line[last_end:], "url": None})
-            segments.append({"type": "normal", "text": "\n", "url": None})
+            _parse_inline(line, segments)
 
-    return segments
+    return segments, meta_char_len
 
 
 # ── Doc creation ──────────────────────────────────────────────────────────────
 
 def create_article_doc(creds, title: str, content: str, drive_folder_id: str) -> str:
     """
-    Create a Google Doc: H1 title, hyperlinked anchors, H2 headings, bold meta
-    lines, Poppins font, and an Unsplash image after the H1.
+    Create a Google Doc with this structure:
+      Meta-title (bold) / Meta-description (bold) / blank line / image / H1 title / body.
+    Hyperlinks, Poppins font, and Unsplash attribution are applied.
     Returns the Doc URL.
     """
     docs  = get_docs_service(creds)
@@ -132,8 +173,13 @@ def create_article_doc(creds, title: str, content: str, drive_folder_id: str) ->
         fields="id,parents"
     ).execute()
 
-    # Build full text + character ranges from segments
-    segments  = _parse_segments(title, content)
+    # Split content into meta block + article body
+    meta_lines, body_lines = _split_content(content)
+
+    # Build segments and get meta block length for image placement
+    segments, meta_block_len = _build_segments(title, meta_lines, body_lines)
+
+    # Build full text string + character ranges
     full_text = ""
     ranges    = []
     for seg in segments:
@@ -152,7 +198,7 @@ def create_article_doc(creds, title: str, content: str, drive_folder_id: str) ->
     for (start, end, seg_type, url) in ranges:
         if not full_text[start:end].strip():
             continue
-        doc_start = start + 1  # Google Docs indices are 1-based
+        doc_start = start + 1
         doc_end   = end   + 1
 
         if seg_type in ("h1", "h2"):
@@ -191,11 +237,11 @@ def create_article_doc(creds, title: str, content: str, drive_folder_id: str) ->
         }}]}
     ).execute()
 
-    # Fetch and insert Unsplash image after H1 (title + \n = len(title)+1, image goes after that)
+    # Fetch and insert Unsplash image after meta block + blank line (before H1)
     image_url, page_url = _fetch_unsplash_image(title, content)
     if image_url:
         try:
-            image_index = len(title) + 2  # after H1 text + its \n (1-based)
+            image_index = meta_block_len + 1  # 1-based; right after meta block + blank line
             docs.documents().batchUpdate(
                 documentId=doc_id,
                 body={"requests": [{"insertInlineImage": {
@@ -211,7 +257,7 @@ def create_article_doc(creds, title: str, content: str, drive_folder_id: str) ->
             if page_url:
                 attr_label = "View photo on Unsplash"
                 attr_text  = "\n" + attr_label + "\n"
-                attr_index = image_index + 1  # image occupies 1 char
+                attr_index = image_index + 1
                 docs.documents().batchUpdate(
                     documentId=doc_id,
                     body={"requests": [{"insertText": {
@@ -234,6 +280,6 @@ def create_article_doc(creds, title: str, content: str, drive_folder_id: str) ->
                     }}]}
                 ).execute()
         except Exception:
-            pass  # Doc is still created without image
+            pass  # Doc is still complete without image
 
     return f"https://docs.google.com/document/d/{doc_id}/edit"
