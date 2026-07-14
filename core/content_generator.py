@@ -19,6 +19,14 @@ LANG_CODE_MAP = {
     "anglais": "en",
 }
 
+# Maps sheet brand values (after slug normalization) to the guidelines filename prefix.
+# Add entries here when the sheet uses a different name than the guidelines file.
+BRAND_SLUG_ALIASES = {
+    "danoneyogurt": "dannon",   # "Danone Yogurt" in sheet → dannon_*.md
+    "danone":       "dannon",   # "Danone" → dannon_*.md
+    "danino":       "dannon",   # "Danino" → dannon_*.md
+}
+
 
 def _load_guidelines(brand: str, client_guideline_prefix: str, language_col: str) -> tuple[str, str]:
     """
@@ -28,17 +36,11 @@ def _load_guidelines(brand: str, client_guideline_prefix: str, language_col: str
     lang_code = LANG_CODE_MAP.get(language_col.strip().lower(), "en")
 
     brand_slug = brand.strip().lower().replace(" ", "").replace("'", "").replace("-", "")
+    brand_slug = BRAND_SLUG_ALIASES.get(brand_slug, brand_slug)
     brand_file = GUIDELINES_DIR / f"{brand_slug}_{client_guideline_prefix}_{lang_code}.md"
     general_file = GUIDELINES_DIR / f"general_{client_guideline_prefix}.md"
 
-    if not brand_file.exists():
-        raise FileNotFoundError(
-            f"Guidelines file not found: {brand_file.name}\n"
-            f"Expected at: guidelines/{brand_file.name}\n"
-            f"Create this file using guidelines/template_brand.md as a starting point."
-        )
-
-    brand_text = brand_file.read_text(encoding="utf-8")
+    brand_text = brand_file.read_text(encoding="utf-8") if brand_file.exists() else ""
 
     # Read language variant declared in the file header
     match = LANGUAGE_VARIANT_PATTERN.search(brand_text)
@@ -49,7 +51,8 @@ def _load_guidelines(brand: str, client_guideline_prefix: str, language_col: str
     combined = ""
     if general_text:
         combined += f"## Client-Wide Guidelines\n\n{general_text}\n\n---\n\n"
-    combined += f"## Brand-Specific Guidelines\n\n{brand_text}"
+    if brand_text:
+        combined += f"## Brand-Specific Guidelines\n\n{brand_text}"
 
     return combined, language_variant
 
