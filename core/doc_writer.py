@@ -25,24 +25,31 @@ def get_drive_service(creds):
 
 def _image_search_query(title: str, content: str) -> str:
     client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
-    preview = content[:2000] if content else title
+    # Use a larger excerpt for better context
+    preview = content[:3000] if content else title
     msg = client.messages.create(
         model="claude-haiku-4-5-20251001",
-        max_tokens=25,
+        max_tokens=30,
         messages=[{"role": "user", "content": (
-            "Generate a 2-4 word Unsplash image search query for the article below. "
-            "Focus on FOOD, DRINKS, KITCHEN SCENES, or LIFESTYLE OBJECTS (e.g. 'yogurt bowl berries', "
-            "'morning coffee table', 'healthy breakfast spread', 'fruit smoothie kitchen'). "
-            "Do NOT include words like 'woman', 'man', 'person', 'body', 'wellness', 'yoga', or 'fitness'. "
-            "Return only the search query, nothing else."
-            f"\n\nHeading: {title}\n\nArticle excerpt:\n{preview}"
+            "Generate a specific 3-5 word Unsplash image search query for the article below.\n"
+            "Rules:\n"
+            "- Focus on the most VISUAL and CONCRETE element: a specific food, ingredient, drink, dish, or scene\n"
+            "- Prefer queries like 'yogurt bowl fresh berries', 'cold brew coffee glass', "
+            "'breakfast granola honey', 'green smoothie ingredients'\n"
+            "- Do NOT use: woman, man, person, body, wellness, yoga, fitness, lifestyle, stress, routine\n"
+            "- Do NOT use abstract concepts — only things a photographer would literally photograph\n"
+            "Return only the search query, nothing else.\n"
+            f"\nHeading: {title}\n\nArticle:\n{preview}"
         )}]
     )
     return msg.content[0].text.strip().strip('"')
 
 
 def _fetch_unsplash_image(title: str, content: str):
-    """Returns (image_url, page_url) or (None, None)."""
+    """
+    Fetch top 5 Unsplash results and return the one with the most likes.
+    Returns (image_url, page_url) or (None, None).
+    """
     api_key = os.getenv("UNSPLASH_ACCESS_KEY")
     if not api_key:
         return None, None
@@ -53,7 +60,13 @@ def _fetch_unsplash_image(title: str, content: str):
     try:
         resp = requests.get(
             "https://api.unsplash.com/search/photos",
-            params={"query": query, "per_page": 1, "orientation": "landscape", "content_filter": "high"},
+            params={
+                "query": query,
+                "per_page": 5,
+                "orientation": "landscape",
+                "content_filter": "high",
+                "order_by": "relevant"
+            },
             headers={"Authorization": f"Client-ID {api_key}"},
             timeout=10
         )
@@ -62,8 +75,9 @@ def _fetch_unsplash_image(title: str, content: str):
         results = resp.json().get("results", [])
         if not results:
             return None, None
-        photo = results[0]
-        return photo["urls"]["regular"], photo["links"]["html"]
+        # Pick highest-liked photo for better quality
+        best = max(results, key=lambda p: p.get("likes", 0))
+        return best["urls"]["regular"], best["links"]["html"]
     except Exception:
         return None, None
 

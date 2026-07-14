@@ -8,7 +8,7 @@ import os
 load_dotenv()
 
 GUIDELINES_DIR = Path(__file__).parent.parent / "guidelines"
-MODEL = "claude-sonnet-4-6"
+MODEL = "claude-opus-4-5"
 
 LANGUAGE_VARIANT_PATTERN = re.compile(r"^Language:\s*(.+)$", re.MULTILINE | re.IGNORECASE)
 
@@ -89,7 +89,7 @@ def _build_prompt(row: dict, guidelines: str, language_variant: str, bl_type: st
             f"This is a pure guest post — write only general editorial content."
         )
 
-    return f"""You are writing an off-site guest post article. Follow all guidelines below exactly.
+    return f"""You are an expert content writer for off-site guest posts and link-building articles. Follow all guidelines below exactly.
 
 ---
 
