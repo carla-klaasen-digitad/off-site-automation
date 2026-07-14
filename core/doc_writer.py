@@ -31,10 +31,11 @@ def _image_search_query(title: str, content: str) -> str:
         max_tokens=25,
         messages=[{"role": "user", "content": (
             "Generate a 2-4 word Unsplash image search query for the article below. "
-            "Pick a concrete, photogenic subject (e.g. 'morning yogurt bowl', "
-            "'family breakfast table', 'woman stretching morning') that visually "
-            "represents the article's main theme — not an abstract concept. "
-            f"Return only the search query, nothing else.\n\nHeading: {title}\n\nArticle excerpt:\n{preview}"
+            "Focus on FOOD, DRINKS, KITCHEN SCENES, or LIFESTYLE OBJECTS (e.g. 'yogurt bowl berries', "
+            "'morning coffee table', 'healthy breakfast spread', 'fruit smoothie kitchen'). "
+            "Do NOT include words like 'woman', 'man', 'person', 'body', 'wellness', 'yoga', or 'fitness'. "
+            "Return only the search query, nothing else."
+            f"\n\nHeading: {title}\n\nArticle excerpt:\n{preview}"
         )}]
     )
     return msg.content[0].text.strip().strip('"')
@@ -136,14 +137,13 @@ def _build_segments(title: str, meta_lines: list, body_lines: list) -> tuple:
     segments.append({"type": "h1",     "text": title, "url": None})
     segments.append({"type": "normal", "text": "\n",  "url": None})
 
-    # 5. Article body
+    # 5. Article body (skip any H1 lines — title is always set from the title parameter)
     for line in body_lines:
         if line.startswith("## "):
             segments.append({"type": "h2",     "text": line[3:].strip(), "url": None})
             segments.append({"type": "normal", "text": "\n",             "url": None})
         elif line.startswith("# "):
-            segments.append({"type": "h1",     "text": line[2:].strip(), "url": None})
-            segments.append({"type": "normal", "text": "\n",             "url": None})
+            pass  # Claude sometimes echoes the title as H1 despite instructions — skip it
         else:
             _parse_inline(line, segments)
 
